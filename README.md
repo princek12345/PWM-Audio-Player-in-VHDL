@@ -1,5 +1,5 @@
 # PWM-Audio-Player-in-VHDL
-PWM Audio Player in VHDL was a course project done at CALTECH in EE119a : Advanced Digital Design course. 
+PWM Audio Player in VHDL was a course project done at CALTECH in EE119a : Advanced Digital Design course. It has been implemented on FPGA Xinlinx XC9572 board.
 
 Note :
 
