@@ -1,70 +1,57 @@
 ----------------------------------------------------------------------------------
--- Company: 
--- Engineer: 
+-- Name : Princekumar B. Kothadiya
+-- UID  : 2209688
+-- EE119a : HW-(6)
+--	PWM Audio Player : PWM_wave block
 -- 
--- Create Date: 11/12/2022 11:20:15 PM
--- Design Name: 
--- Module Name: PWM_wave - Behavioral
--- Project Name: 
--- Target Devices: 
--- Tool Versions: 
--- Description: 
+----------------------------------------------------------------------------
+-- Description :
+--
+--	It is generating PWM wave as output.
+-- It is using lower 8-bit counter value (to oversample by 16 times) to compare with with EPROM msg data and generating pulses.
+--	This will result into 16 pulses, all of equal width for each sample.
 -- 
--- Dependencies: 
--- 
--- Revision:
--- Revision 0.01 - File Created
--- Additional Comments:
--- 
-----------------------------------------------------------------------------------
+-- It takes EPROM msg data as input from Address_RW block and lower 8-bit of count value from counter block.
 
+-----------------------------------------------------------------------------
+-- Logic :
+--
+-- If lower 8-bit count value is less then msg 8-bit 	: 	Pulse -> HIGH
+-- Otherwise 														:	Pulse -> LOW		
+-- 
+-----------------------------------------------------------------------------
+--Port Description :
+--
+-- I/P :- (1) : lower 8-bit of count value -> from Counter block
+--			 (2) : 8-bit EPROM msg data -> from Address_RW_block
 
+-- O/P :- (1) : PWM output as Pulse -> Final output as music
+-----------------------------------------------------------------------------
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
--- Uncomment the following library declaration if using
--- arithmetic functions with Signed or Unsigned values
---use IEEE.NUMERIC_STD.ALL;
-
--- Uncomment the following library declaration if instantiating
--- any Xilinx leaf cells in this code.
---library UNISIM;
---use UNISIM.VComponents.all;
-
 entity PWM_wave is
   Port ( 
-  clk : in std_logic;
-  reset : in std_logic;
-  count : in std_logic_vector(11 downto 0);
-  msg : in std_logic_vector(7 downto 0);
-  pwm_out : out std_logic
+  count 		: in std_logic_vector(7 downto 0);	-- passing lower 8-bit of counter
+  msg 		: in std_logic_vector(7 downto 0);	-- passing 8-bit EPROM msg data
+  pwm_out 	: out std_logic							-- final output as pulse width
   
   );
 end PWM_wave;
 
-architecture Behavioral of PWM_wave is
+architecture DataFlow of PWM_wave is
 
 begin
 
-    P1: process(clk)
-    
+ 	P1: process(count,msg)		-- process on count and msg (Looks like asynchronous without clk but count value is updating on rising edge of the clock so overall -> Synchronous)   
     begin 
-    
-    if (reset='1') then
-    
-        pwm_out <= '0';
-    
-    elsif(rising_edge(clk)) then
-    
-        if(count(7 downto 0) < msg(7 downto 0)) then
-            pwm_out <= '1';
-        
-        else 
-            pwm_out <= '0';
-        
+          
+        if(count < msg) then	-- comparing lower 8-bit of count value with msg   
+				pwm_out <= '1';	-- PWM output -> HIGH pulse       
+        else          
+				pwm_out <= '0';	-- PWM output -> LOW pulse      
         end if;
-    end if;
     
    end process;
 
-end Behavioral;
+end DataFlow;
